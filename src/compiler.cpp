@@ -38,11 +38,22 @@ void TiramisuCompiler::run(torch::jit::Stack& stack) {
   // do so now.
   CompleteArgumentSpec spec{false, ArrayRef<IValue>(inputs)};
   if (cache_.find(spec) == cache_.end()) {
-    cache_[spec] = compile(inputs);
+      TORCH_CHECK(inputs.size(), "Need at least one input.");
+        for (const auto& input : inputs) {
+            TORCH_CHECK(input.isTensor(), "Compiler can only handle Tensor inputs.");
+        }
+        auto size = inputs[0].toTensor().numel();
+        for (const auto& input : inputs) {
+            TORCH_CHECK(
+                input.toTensor().numel() == size,
+                "Compiler can only handle pointwise operations without broadcasting.");
+        } 
+
+        relu_tiramisu(input.raw_buffer(), parameters.raw_buffer(), subgraph_->outputs().raw_buffer());
   }
 
   // Run the compiled function!
-  auto outputs = cache_[spec](inputs);
+  auto outputs = subgraph_->outputs(); 
 
   drop(stack, num_inputs);
   for (auto& output : outputs) {
@@ -54,21 +65,5 @@ void TiramisuCompiler::run(torch::jit::Stack& stack) {
 void runOnFailure(torch::jit::Stack& stack) {
   torch::jit::InterpreterState(torch::jit::Code(subgraph_)).run(stack);
 }
-
-CompiledCode TiramisuCompiler::compile(
-    at::ArrayRef<torch::jit::IValue>& inputs) {
-        // Check the inputs 
-        TORCH_CHECK(inputs.size(), "Need at least one input.");
-        for (const auto& input : inputs) {
-            TORCH_CHECK(input.isTensor(), "Compiler can only handle Tensor inputs.");
-        }
-        auto size = inputs[0].toTensor().numel();
-        for (const auto& input : inputs) {
-            TORCH_CHECK(
-                input.toTensor().numel() == size,
-                "Compiler can only handle pointwise operations without broadcasting.");
-        } 
-        
-
 
 
