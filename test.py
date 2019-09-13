@@ -15,7 +15,7 @@ print("PyTorch IR  \n", test.graph_for())
 output = test(t)
 print("Default version took {:.2f}ms".format(1000 * time_execution(test)))
 
-import tiramisu_torch  
+import tiramisu_compiler
 
 @torch.jit.script
 def test_tiramisu(t): 
