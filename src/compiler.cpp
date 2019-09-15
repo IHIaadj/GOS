@@ -2,15 +2,15 @@
 #include "compiler.h"
 #include <torch/csrc/jit/interpreter.h>
 
-#include "relu_layer_generator_tiramisu.o.h"
-#include "Halide.h"
+#include "tiramisu/relu_layer_generator_tiramisu.o.h"
+#include "tiramisu/3rdParty/Halide/Halide.h"
 #include <tiramisu/utils.h>
 #include <cstdlib>
 #include <chrono>
 #include <string>
 #include <time.h>
 #include <iostream>
-#include "configure.h"
+#include "tiramisu/benchmarks/DNN/layers/relu/cpu/configure.h"
 
 #include <stack>
 
