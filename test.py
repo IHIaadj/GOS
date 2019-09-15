@@ -10,8 +10,8 @@ def time_execution(f):
     return time.time() - t 
 
 @torch.jit.script
-def test(t): 
-    return F.relu_(t)
+def test(A): 
+    return F.relu_(A)
 
 A = torch.randn(10000, 10000)
 print("PyTorch IR  \n", test.graph_for(A))
@@ -20,8 +20,8 @@ print("Default version took {:.2f}ms".format(1000 * time_execution(test)))
 import tiramisu_compiler
 
 @torch.jit.script
-def test_tiramisu(t): 
-    return F.relu_(t)
+def test_tiramisu(A): 
+    return F.relu_(A)
 
 print("Default version took {:.2f}ms".format(1000 * time_execution(test_tiramisu)))
     
