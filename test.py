@@ -1,7 +1,9 @@
 import torch
+import torch.nn.functional as F 
+import time 
 
 def time_execution(f): 
-    A = torch.randn(10000, 10000, device=device)
+    A = torch.randn(10000, 10000)
     t = time.time()
     for _ in range(100):
         _ = f(A)
@@ -11,8 +13,8 @@ def time_execution(f):
 def test(t): 
     return F.relu_(t)
 
-print("PyTorch IR  \n", test.graph_for())
-output = test(t)
+A = torch.randn(10000, 10000)
+print("PyTorch IR  \n", test.graph_for(A))
 print("Default version took {:.2f}ms".format(1000 * time_execution(test)))
 
 import tiramisu_compiler
@@ -21,6 +23,5 @@ import tiramisu_compiler
 def test_tiramisu(t): 
     return F.relu_(t)
 
-output = test_tiramisu(t)
 print("Default version took {:.2f}ms".format(1000 * time_execution(test_tiramisu)))
     
