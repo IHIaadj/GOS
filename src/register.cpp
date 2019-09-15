@@ -22,8 +22,8 @@ PYBIND11_MODULE(tiramisu_compiler, m) {
       Symbol::fromQualString("pw::CompilationGroup");
 
     
-    RegisterPass pass([](std::shared_ptr<Graph>& g) {
-        CustomFuseGraph(g, tiramisuCompiler::supported, tiramisu_compiler_symbol);
+    RegisterPass pass([tiramisu_compiler_symbol](std::shared_ptr<Graph>& g) {
+        CustomFuseGraph(g, TiramisuCompiler::supported, tiramisu_compiler_symbol);
     });
 
     RegisterOperators op({Operator(

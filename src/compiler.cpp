@@ -2,15 +2,15 @@
 #include "compiler.h"
 #include <torch/csrc/jit/interpreter.h>
 
-#include "tiramisu/relu_layer_generator_tiramisu.o.h"
-#include "tiramisu/3rdParty/Halide/Halide.h"
-#include <tiramisu/utils.h>
+//#include "tiramisu/relu_layer_generator_tiramisu.o.h"
+//#include "tiramisu/3rdParty/Halide/Halide.h"
+//#include <tiramisu/utils.h>
 #include <cstdlib>
 #include <chrono>
 #include <string>
 #include <time.h>
 #include <iostream>
-#include "tiramisu/benchmarks/DNN/layers/relu/cpu/configure.h"
+//#include "tiramisu/benchmarks/DNN/layers/relu/cpu/configure.h"
 
 #include <stack>
 
@@ -46,24 +46,18 @@ void TiramisuCompiler::run(torch::jit::Stack& stack) {
         for (const auto& input : inputs) {
             TORCH_CHECK(
                 input.toTensor().numel() == size,
-                "Compiler can only handle pointwise operations without broadcasting.");
+                "Compiler can only handle tiramisu operations without broadcasting.");
         } 
 
-        relu_tiramisu(input.raw_buffer(), parameters.raw_buffer(), subgraph_->outputs().raw_buffer());
+        std::cout << subgraph_->outputs()[0] << std::endl; 
+        //relu_tiramisu(input.raw_buffer(), parameters.raw_buffer(), subgraph_->outputs().raw_buffer());
   }
 
   // Run the compiled function!
   auto outputs = subgraph_->outputs(); 
 
   drop(stack, num_inputs);
-  for (auto& output : outputs) {
-    auto var = torch::autograd::make_variable(output.toTensor());
-    stack.push_back(IValue(var));
-  }
-}
-
-void runOnFailure(torch::jit::Stack& stack) {
-  torch::jit::InterpreterState(torch::jit::Code(subgraph_)).run(stack);
+  
 }
 
 

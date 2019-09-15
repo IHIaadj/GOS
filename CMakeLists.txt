@@ -23,14 +23,12 @@ message("Using PyTorch directory ${PYTORCH_DIR}")
 link_directories(${PYTORCH_DIR}/lib)
 
 add_subdirectory(pybind11)
-add_subdirectory(tiramisu)
 
 pybind11_add_module(tiramisu_compiler SHARED ${COMPILER_SRCS})
-target_link_libraries(tiramisuss_compiler PUBLIC torch pybind11 asmjit)
+target_link_libraries(tiramisu_compiler PUBLIC torch pybind11)
 
 target_include_directories(tiramisu_compiler PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${PYTORCH_DIR}/include
     ${PYBIND11_INCLUDE_DIR}
-    tiramisu/benchmark 
 )
