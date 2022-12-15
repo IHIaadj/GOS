@@ -1,2 +1,2 @@
-# torch_tiramisu
-Integration of Tiramisu in PyTorch 
+# NAX
+Neural Architecture Search on JAX
