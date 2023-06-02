@@ -13,21 +13,21 @@
 namespace py = pybind11;
 using namespace torch::jit;
 
-PYBIND11_MODULE(tiramisu_compiler, m) {
+PYBIND11_MODULE(gos, m) {
 
     auto options = c10::OperatorOptions();
     options.setAliasAnalysis(AliasAnalysisKind::PURE_FUNCTION);
     
-    const auto tiramisu_compiler_symbol =
+    const auto gos_symbol =
       Symbol::fromQualString("pw::CompilationGroup");
 
     
-    RegisterPass pass([tiramisu_compiler_symbol](std::shared_ptr<Graph>& g) {
-        CustomFuseGraph(g, TiramisuCompiler::supported, tiramisu_compiler_symbol);
+    RegisterPass pass([gos_symbol](std::shared_ptr<Graph>& g) {
+        CustomFuseGraph(g, TiramisuCompiler::supported, gos_symbol);
     });
 
     RegisterOperators op({Operator(
-      tiramisu_compiler_symbol,
+      gos_symbol,
       [](const Node* node) {
         auto compiler = std::make_shared<TiramisuCompiler>(node);
         return [compiler](Stack& stack) {

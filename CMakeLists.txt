@@ -24,10 +24,10 @@ link_directories(${PYTORCH_DIR}/lib)
 
 add_subdirectory(pybind11)
 
-pybind11_add_module(tiramisu_compiler SHARED ${COMPILER_SRCS})
-target_link_libraries(tiramisu_compiler PUBLIC torch pybind11)
+pybind11_add_module(gos SHARED ${COMPILER_SRCS})
+target_link_libraries(gos PUBLIC torch pybind11)
 
-target_include_directories(tiramisu_compiler PUBLIC
+target_include_directories(gos PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${PYTORCH_DIR}/include
     ${PYBIND11_INCLUDE_DIR}

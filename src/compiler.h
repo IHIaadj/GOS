@@ -8,9 +8,9 @@
 using CompiledCode = std::function<std::vector<torch::jit::IValue>(
     at::ArrayRef<torch::jit::IValue>&)>;
 
-class TiramisuCompiler {
+class GOS {
  public:
-  TiramisuCompiler(const torch::jit::Node* node)
+  GOS(const torch::jit::Node* node)
       : subgraph_(node->g(torch::jit::attr::Subgraph)) {}
   void run(torch::jit::Stack& stack);
   static bool supported(const torch::jit::Node* node);

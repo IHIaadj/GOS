@@ -2,21 +2,16 @@
 #include "compiler.h"
 #include <torch/csrc/jit/interpreter.h>
 
-//#include "tiramisu/relu_layer_generator_tiramisu.o.h"
-//#include "tiramisu/3rdParty/Halide/Halide.h"
-//#include <tiramisu/utils.h>
 #include <cstdlib>
 #include <chrono>
 #include <string>
 #include <time.h>
 #include <iostream>
-//#include "tiramisu/benchmarks/DNN/layers/relu/cpu/configure.h"
-
 #include <stack>
 
 using namespace torch::jit;
 
-bool TiramisuCompiler::supported(const torch::jit::Node* node) {
+bool GOS::supported(const torch::jit::Node* node) {
   switch (node->kind()) {
     case aten::relu:
       return true;
@@ -26,7 +21,7 @@ bool TiramisuCompiler::supported(const torch::jit::Node* node) {
   return false;
 }
 
-void TiramisuCompiler::run(torch::jit::Stack& stack) {
+void GOS::run(torch::jit::Stack& stack) {
   // Get the number of expected inputs to the graph we are compiling
   const at::ArrayRef<Value*>& graph_inputs = subgraph_->inputs();
   const auto num_inputs = graph_inputs.size();
@@ -40,17 +35,16 @@ void TiramisuCompiler::run(torch::jit::Stack& stack) {
   if (cache_.find(spec) == cache_.end()) {
       TORCH_CHECK(inputs.size(), "Need at least one input.");
         for (const auto& input : inputs) {
-            TORCH_CHECK(input.isTensor(), "Compiler can only handle Tensor inputs.");
+            TORCH_CHECK(input.isTensor(), "GOS only handles Tensor inputs.");
         }
         auto size = inputs[0].toTensor().numel();
         for (const auto& input : inputs) {
             TORCH_CHECK(
                 input.toTensor().numel() == size,
-                "Compiler can only handle tiramisu operations without broadcasting.");
+                "GOS cannot handle broadcasting");
         } 
 
         std::cout << subgraph_->outputs()[0] << std::endl; 
-        //relu_tiramisu(input.raw_buffer(), parameters.raw_buffer(), subgraph_->outputs().raw_buffer());
   }
 
   // Run the compiled function!
